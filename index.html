@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f2f4f1" />
+    <meta name="description" content="Simulador 3D de geladeira aberta: mapa de calor de visibilidade e organização automática de produtos." />
+    <link rel="icon" href="data:," />
+    <title>Geladeira · mapa de visibilidade</title>
+  </head>
+  <body>
+    <div class="app" id="app">
+      <section class="visor" id="visor" aria-label="Visualização da geladeira">
+        <div class="barra-topo">
+          <div class="segmentado" role="group" aria-label="Cor das alfaces">
+            <button type="button" data-modo="calor" aria-pressed="true">Mapa de calor</button>
+            <button type="button" data-modo="produtos" aria-pressed="false">Produtos</button>
+          </div>
+          <div class="segmentado" role="group" aria-label="Vista">
+            <button type="button" data-vista="3d" aria-pressed="true">3D</button>
+            <button type="button" data-vista="2d" aria-pressed="false">2D</button>
+          </div>
+        </div>
+        <div class="palco" id="palco">
+          <div class="vista" id="vista-3d"></div>
+          <canvas class="vista" id="vista-2d" hidden aria-label="Planograma frontal em grade"></canvas>
+        </div>
+        <div class="info" id="info" hidden role="status" aria-live="polite">
+          <div class="info-texto" id="info-texto"></div>
+          <button type="button" class="fechar" id="fechar-info" aria-label="Fechar detalhes">✕</button>
+        </div>
+        <div class="legenda" id="legenda" aria-label="Legenda"></div>
+      </section>
+
+      <section class="gaveta" id="gaveta" aria-label="Controles">
+        <button type="button" class="alca" id="alca" aria-expanded="true" aria-controls="gaveta-conteudo">
+          <span class="alca-traco" aria-hidden="true"></span>
+          <span id="alca-texto">Recolher controles</span>
+        </button>
+        <div class="gaveta-conteudo" id="gaveta-conteudo">
+          <div class="abas" role="tablist" aria-label="Seções">
+            <button type="button" role="tab" id="aba-planilha" aria-controls="painel-planilha" aria-selected="true">Planilha</button>
+            <button type="button" role="tab" id="aba-resultado" aria-controls="painel-resultado" aria-selected="false" tabindex="-1">Resultado</button>
+            <button type="button" role="tab" id="aba-ajustes" aria-controls="painel-ajustes" aria-selected="false" tabindex="-1">Ajustes</button>
+          </div>
+
+          <div class="painel" role="tabpanel" id="painel-planilha" aria-labelledby="aba-planilha">
+            <div class="acoes">
+              <label class="botao primario" for="arquivo">Importar planilha</label>
+              <input
+                class="oculto"
+                type="file"
+                id="arquivo"
+                accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              />
+              <button type="button" class="botao" id="baixar-modelo">Baixar modelo</button>
+            </div>
+            <p class="dica">
+              Arquivo .xlsx ou .csv com as colunas <strong>produto</strong>, <strong>preco</strong>,
+              <strong>volume</strong> e <strong>quantidade</strong> (em unidades; 1 alface = 1 u).
+            </p>
+            <p class="mensagem" id="mensagem" role="status" aria-live="polite" hidden></p>
+            <p class="fonte" id="fonte"></p>
+            <label class="interruptor">
+              <input type="checkbox" id="lotar" checked />
+              <span class="trilho" aria-hidden="true"></span>
+              <span class="interruptor-texto">Lotar geladeira</span>
+            </label>
+            <p class="dica" id="dica-lotar"></p>
+            <p class="dica privacidade">Tudo é calculado neste aparelho. Nenhum dado sai do navegador.</p>
+          </div>
+
+          <div class="painel" role="tabpanel" id="painel-resultado" aria-labelledby="aba-resultado" hidden>
+            <p class="resumo" id="resumo"></p>
+            <table class="tabela" id="tabela-resultado">
+              <thead>
+                <tr>
+                  <th scope="col">Produto</th>
+                  <th scope="col" class="num">Prioridade</th>
+                  <th scope="col" class="num">Colunas</th>
+                  <th scope="col" class="num">Visib. média</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <div class="nao-coube" id="nao-coube" hidden>
+              <h3>Não coube</h3>
+              <ul id="lista-nao-coube"></ul>
+            </div>
+          </div>
+
+          <div class="painel" role="tabpanel" id="painel-ajustes" aria-labelledby="aba-ajustes" hidden>
+            <fieldset class="grupo">
+              <legend>Alinhamento das prateleiras 4 e 5</legend>
+              <div class="segmentado largo" role="group" aria-label="Alinhamento das prateleiras 4 e 5">
+                <button type="button" data-alinhamento="esquerda" aria-pressed="false">Esquerda</button>
+                <button type="button" data-alinhamento="centro" aria-pressed="true">Centro</button>
+                <button type="button" data-alinhamento="direita" aria-pressed="false">Direita</button>
+              </div>
+            </fieldset>
+            <div id="ajustes"></div>
+            <button type="button" class="botao" id="restaurar">Restaurar padrão</button>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
